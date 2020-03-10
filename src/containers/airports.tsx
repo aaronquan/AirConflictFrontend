@@ -23,8 +23,8 @@ export class Airports extends React.Component<{}, AirportsState>{
         //let options = {params: {
         //    page_size: 100
         //}};
-        //requestAllPages(`http://airconflictapi.herokuapp.com/api/airport/`, updateState, options);
-        requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/airport/`, updateState, options);
+        //requestAllPages(`http://airconflictapi.herokuapp.com/api/airport/`, updateState);
+        requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/airport/`, updateState);
     }
     render(){
         return (<>{this.state.airports.map((airport:AirportProps, i:number) => <Airport key={airport.icao} {...airport}/>)}</>);
