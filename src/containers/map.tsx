@@ -1,6 +1,6 @@
 import React from 'react';
 import { AxiosResponse } from 'axios';
-import {singleRequest, requestChain, requestAllPages} from '../scripts/requests';
+import {singleRequest, requestChain, requestAllPages, requestAllPagesFastReturn} from '../scripts/requests';
 
 import {MapShape, MapShapeProps} from '../components/mapShape';
 import {BoundingBox} from '../components/svgMap';
@@ -21,7 +21,8 @@ export class Map extends React.Component<BoundingBox, MapState>{
             })
         }
         //requestChain(`http://localhost:62080/api/maparea/`, updateState, {params: {...this.props}}); //old axios call (check time diff)
-        requestAllPages(`http://airconflictapi.herokuapp.com/api/map/`, updateState);
+        //requestAllPages(`http://airconflictapi.herokuapp.com/api/map/`, updateState);
+        requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/map/`, updateState);
         //requestAllPages(`http://airconflictapi.herokuapp.com/api/maparea/`, updateState, {params: {...this.props}});
     }
     render(){

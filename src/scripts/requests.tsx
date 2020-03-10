@@ -31,7 +31,6 @@ export function requestAllPages(url:string, callback:((r:AxiosResponse<any>, par
                     let newOptions = Object.assign({}, getOptions);
                     let newParams = Object.assign({page: i}, getOptions.params);
                     newOptions.params = newParams;
-                    console.log(newOptions);
                     otherPages.push(axios.get(url, newOptions));
                 }
                 axios.all(otherPages)
@@ -61,5 +60,37 @@ export function requestAllPages(url:string, callback:((r:AxiosResponse<any>, par
             }
             callback(res, callbackParams);
         });    
+    }
+}
+
+export function requestAllPagesFastReturn(url:string, callback:((r:AxiosResponse<any>, params?:any) => any), getOptions?:any, callbackParams?:any){
+    if(getOptions){
+        axios.get(url, getOptions).then(res => {
+            if('total_pages' in res.data){
+                let npages:number = res.data.total_pages;
+                for (let i=2; i<=npages; i++){
+                    let newOptions = Object.assign({}, getOptions);
+                    let newParams = Object.assign({page: i}, getOptions.params);
+                    newOptions.params = newParams;
+                    axios.get(url, newOptions).then(res => {
+                        callback(res, callbackParams);
+                    });
+                }
+            }
+            callback(res, callbackParams);
+        });
+    }else{
+        axios.get(url, getOptions).then(res => {
+            if('total_pages' in res.data){
+                let npages:number = res.data.total_pages;
+                for (let i=2; i<=npages; i++){
+                    let newOptions = {params: {page: i}};
+                    axios.get(url, newOptions).then(res => {
+                        callback(res, callbackParams);
+                    });
+                }
+            }
+            callback(res, callbackParams);
+        });
     }
 }

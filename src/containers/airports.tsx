@@ -1,6 +1,6 @@
 import React from 'react';
 import { AxiosResponse } from 'axios';
-import {singleRequest, requestChain, requestAllPages} from '../scripts/requests';
+import {singleRequest, requestChain, requestAllPages, requestAllPagesFastReturn} from '../scripts/requests';
 
 import {AirportProps, Airport} from '../components/airport';
 
@@ -20,7 +20,11 @@ export class Airports extends React.Component<{}, AirportsState>{
                 return {airports: state.airports.concat(r.data.results)};
             });
         }
-        requestAllPages(`http://airconflictapi.herokuapp.com/api/airport/`, updateState);
+        //let options = {params: {
+        //    page_size: 100
+        //}};
+        //requestAllPages(`http://airconflictapi.herokuapp.com/api/airport/`, updateState, options);
+        requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/airport/`, updateState, options);
     }
     render(){
         return (<>{this.state.airports.map((airport:AirportProps, i:number) => <Airport key={airport.icao} {...airport}/>)}</>);
