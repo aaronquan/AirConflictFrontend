@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Map from '../containers/map';
+import {AirportProps} from './airport';
 import {Airports} from '../containers/airports';
-import {BoundingBox, longitudeDifference} from '../scripts/coordinateHelpers';
+import {MapOverlay} from './mapOver';
+
+
+import {BoundingBox, Coordinate,  longitudeDifference} from '../scripts/coordinateHelpers';
 import {floatGT} from '../scripts/floatError';
 
 import '../css/map.css';
@@ -50,7 +54,8 @@ type MapCanvasState = {
     transform:Transform,
     mouse:Point,
     mapViewBounds:BoundingBox,
-    mouseDown:boolean
+    mouseDown:boolean,
+    selectedAirport:AirportProps|undefined
     //mouse:DOMPoint,
     //matrix:DOMMatrix
 }
@@ -72,6 +77,7 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
             mouse: {x:0, y:0},
             mouseDown: false,
             mapViewBounds: props.bound,
+            selectedAirport: undefined
         };
         this.initialZoom = transformation.scale.x;
         //function bindings
@@ -80,6 +86,8 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         this.handleDown = this.handleDown.bind(this);
         this.handleLeave = this.handleLeave.bind(this);
         this.handleWheel = this.handleWheel.bind(this);
+        this.selectAirport = this.selectAirport.bind(this);
+        this.deselectAirport = this.deselectAirport.bind(this);
     }
     getMapViewBounds(transformation?:Transform){
         //no transformation
@@ -173,7 +181,6 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
                 min_latitude: this.state.mapViewBounds.min_latitude - translateShift.y,
                 max_latitude: this.state.mapViewBounds.max_latitude - translateShift.y
             }
-            console.log(newViewBounds);
             this.setState({transform: newTransformation, mouse:newPoint, mapViewBounds: newViewBounds});
         }else{
             this.setState({mouse: newPoint});
@@ -251,6 +258,12 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         }*/
         this.setState({transform: newTransformation, mouse: newMouse, mapViewBounds: this.getMapViewBounds(newTransformation)});
     }
+    selectAirport(airport:AirportProps){
+        this.setState({selectedAirport: airport});
+    }
+    deselectAirport(){
+        this.setState({selectedAirport: undefined});
+    }
     render(){
         return (
         <div className='Map'>
@@ -265,16 +278,20 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
             >
                 <g ref={this.transformRef} transform={transformString(this.state.transform)}>
                     <Map maxBound={this.props.bound} viewBound={this.state.mapViewBounds} zoomLevel={this.state.transform.scale.x}/>
-                    <Airports maxBound={this.props.bound} viewBound={this.state.mapViewBounds} zoomLevel={this.state.transform.scale.x}/>
+                    <Airports 
+                        onSelection={this.selectAirport} onDeselection={this.deselectAirport}
+                        maxBound={this.props.bound} viewBound={this.state.mapViewBounds} zoomLevel={this.state.transform.scale.x}
+                    />
                 </g>
             </svg>
-            <div className='Overlay'>
-                <div>{this.state.mouse.x.toFixed(2)} {this.state.mouse.y.toFixed(2)}</div>
-                <div>{this.state.transform.scale.x}</div> 
-            </div>
+            <MapOverlay mouse={this.state.mouse} zoomLevel={this.state.transform.scale.x} selectedAirport={this.state.selectedAirport}/>
         </div>);
-    }//<div>{this.state.transform.scale.x}</div> in overlay
-    //<circle cx={this.state.mouse.x} cy={this.state.mouse.y} r='0.5' fill='red'/>
+    }
+    /*<div className='Overlay'>
+        <div>{this.state.mouse.x.toFixed(2)} {this.state.mouse.y.toFixed(2)}</div>
+        <div>{this.state.transform.scale.x}</div> 
+        <div>{this.state.selectedAirport}</div>
+    </div>*/
 }
 
 function getTransformation(cp:MapCanvasProps){

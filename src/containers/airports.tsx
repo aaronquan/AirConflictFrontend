@@ -10,7 +10,9 @@ import {AirportProps, Airport} from '../components/airport';
 type AirportsProps = {
     maxBound:BoundingBox,
     viewBound:BoundingBox,
-    zoomLevel:number
+    zoomLevel:number,
+    onSelection:(ap:AirportProps) => void,
+    onDeselection:() => void
 }
 
 type AirportsState = {
@@ -21,6 +23,8 @@ export class Airports extends React.Component<AirportsProps, AirportsState>{
     constructor(props:AirportsProps){
         super(props);
         this.state = {airports: []};
+        this.onSelection = this.onSelection.bind(this);
+        this.onDeselection = this.onDeselection.bind(this);
     }
     componentDidMount(){
         let updateState = (r:AxiosResponse<any>) => {
@@ -35,23 +39,18 @@ export class Airports extends React.Component<AirportsProps, AirportsState>{
         //requestAllPages(`http://airconflictapi.herokuapp.com/api/airport/`, updateState);
         requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/airport/`, updateState, {params: {...this.props.maxBound}});
     }
-    displayAirport(airport:AirportProps){
-        let coord:Coordinate = {
-            longitude: airport.longitude,
-            latitude: airport.latitude
-        }
-        let toRender:JSX.Element;
-        if(coordinateInsideBound(coord, this.props.viewBound)){
-            toRender = <Airport key={airport.icao} {...airport} zoomLevel={this.props.zoomLevel}/>;
-        }else{
-            toRender = <></>;
-        }
-        return toRender;
+    onSelection(ap:AirportProps){
+        this.props.onSelection(ap);
+    }
+    onDeselection(){
+        this.props.onDeselection();
     }
     render(){
         return (<>{this.state.airports.map((airport:AirportProps) => 
-                    this.displayAirport(airport)
-                    //<Airport key={airport.icao} {...airport} />
+                    <Airport 
+                        onSelection={this.onSelection} onDeselection={this.onDeselection}
+                        key={airport.icao} {...airport} zoomLevel={this.props.zoomLevel}
+                    />
                 )}</>);
     }
 };

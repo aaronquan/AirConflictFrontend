@@ -12,7 +12,10 @@ export type AirportProps = {
     timezone: string,
 
     //viewBound:BoundingBox,
-    zoomLevel:number
+    zoomLevel:number,
+
+    onSelection:(ap:AirportProps) => void,
+    onDeselection:() => void
 }
 
 type CircleAttributes = {
@@ -24,6 +27,8 @@ type CircleAttributes = {
 export class Airport extends React.Component<AirportProps>{
     constructor(props:AirportProps){
         super(props);
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
+        this.handleMouseLeave = this.handleMouseLeave.bind(this);
     }
     /*displayAirport(){
         let coord:Coordinate = {
@@ -37,10 +42,19 @@ export class Airport extends React.Component<AirportProps>{
             toRender = <></>;
         }
     }*/
+    handleMouseEnter(){
+        this.props.onSelection(this.props);
+    }
+    handleMouseLeave(){
+        this.props.onDeselection();
+    }
     circleRadius(){
         return 3.5/this.props.zoomLevel;
     }
     render(){
-        return (<circle cx={this.props.longitude} cy={this.props.latitude} r={this.circleRadius()} fill='white'/>);
+        return (<circle 
+                    onMouseEnter={this.handleMouseEnter}  onMouseLeave={this.handleMouseLeave}
+                    cx={this.props.longitude} cy={this.props.latitude} r={this.circleRadius()} fill='white'
+                />);
     }
 }
