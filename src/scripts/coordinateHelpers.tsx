@@ -10,6 +10,11 @@ export type Coordinate = {
     latitude:number,
 }
 
+export type Point = {
+    x:number,
+    y:number
+}
+
 export function longitudeDifference(max_lon:number, min_lon:number){
     let result:number;
     if(max_lon < min_lon){

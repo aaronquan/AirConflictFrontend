@@ -4,6 +4,7 @@ import Map from '../containers/map';
 import {AirportProps} from './airport';
 import {Airports} from '../containers/airports';
 import {MapOverlay} from './mapOver';
+import {AirportPopup} from './airportPopup';
 
 
 import {BoundingBox, Coordinate,  longitudeDifference} from '../scripts/coordinateHelpers';
@@ -53,6 +54,7 @@ export type MapCanvasProps = {
 type MapCanvasState = {
     transform:Transform,
     mouse:Point,
+    rawMouse:Point,
     mapViewBounds:BoundingBox,
     mouseDown:boolean,
     selectedAirport:AirportProps|undefined
@@ -75,6 +77,7 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         this.state = {
             transform:transformation,
             mouse: {x:0, y:0},
+            rawMouse: {x:0, y:0},
             mouseDown: false,
             mapViewBounds: props.bound,
             selectedAirport: undefined
@@ -140,8 +143,8 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
     componentDidMount(){
         let viewBound:BoundingBox = this.getMapViewBounds();
         this.setState({mapViewBounds: viewBound});
-        console.log(viewBound);
-        console.log(this.state.transform);
+        //console.log(viewBound);
+        //console.log(this.state.transform);
     }
     handleMove(e:React.MouseEvent){
         let lastPoint:Point = this.state.mouse;
@@ -150,6 +153,10 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         let pt:DOMPoint = node.createSVGPoint();
         pt.x = e.clientX; pt.y = e.clientY;
         let newPoint:Point = pt.matrixTransform(tf.getScreenCTM()!.inverse());
+        let rawMouse = {
+            x:e.clientX,
+            y:e.clientY
+        }
         if(this.state.mouseDown){
             //panning the map with mouse
             let translateShift = {
@@ -181,9 +188,9 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
                 min_latitude: this.state.mapViewBounds.min_latitude - translateShift.y,
                 max_latitude: this.state.mapViewBounds.max_latitude - translateShift.y
             }
-            this.setState({transform: newTransformation, mouse:newPoint, mapViewBounds: newViewBounds});
+            this.setState({transform: newTransformation, mouse:newPoint, rawMouse:rawMouse, mapViewBounds: newViewBounds});
         }else{
-            this.setState({mouse: newPoint});
+            this.setState({mouse: newPoint, rawMouse:rawMouse});
         }
     }
     handleUp(e:React.MouseEvent){
@@ -285,6 +292,8 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
                 </g>
             </svg>
             <MapOverlay mouse={this.state.mouse} zoomLevel={this.state.transform.scale.x} selectedAirport={this.state.selectedAirport}/>
+            <AirportPopup width={this.props.width} height={this.props.height}
+            mouse={this.state.mouse} rawMouse={this.state.rawMouse} selectedAirport={this.state.selectedAirport}/>
         </div>);
     }
     /*<div className='Overlay'>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {BoundingBox, Coordinate, coordinateInsideBound} from '../scripts/coordinateHelpers';
+import {Popover, Card} from '@material-ui/core';
 
 export type AirportProps = {
     name: string,
@@ -11,11 +12,15 @@ export type AirportProps = {
     altitude: number,
     timezone: string,
 
-    //viewBound:BoundingBox,
+    viewBound:BoundingBox,
     zoomLevel:number,
 
     onSelection:(ap:AirportProps) => void,
     onDeselection:() => void
+}
+
+type AirportState = {
+    circleFill:string
 }
 
 type CircleAttributes = {
@@ -24,37 +29,49 @@ type CircleAttributes = {
     r: number
 }
 
-export class Airport extends React.Component<AirportProps>{
+export class Airport extends React.Component<AirportProps, AirportState>{
     constructor(props:AirportProps){
         super(props);
         this.handleMouseEnter = this.handleMouseEnter.bind(this);
         this.handleMouseLeave = this.handleMouseLeave.bind(this);
+        this.state = {
+            circleFill: 'white',
+        }
     }
-    /*displayAirport(){
+    displayAirport(){
         let coord:Coordinate = {
             longitude: this.props.longitude,
             latitude: this.props.latitude
         }
         let toRender:JSX.Element;
         if(coordinateInsideBound(coord, this.props.viewBound)){
-            toRender = <circle cx={this.props.longitude} cy={this.props.latitude} r='0.2' fill='white'/>
+            toRender = <circle 
+                            onMouseEnter={this.handleMouseEnter}  onMouseLeave={this.handleMouseLeave}
+                            cx={this.props.longitude} cy={this.props.latitude} r={this.circleRadius()} fill={this.state.circleFill}
+                        />
         }else{
             toRender = <></>;
         }
-    }*/
+        return toRender;
+    }
     handleMouseEnter(){
         this.props.onSelection(this.props);
+        this.setState({circleFill: 'grey'});
     }
     handleMouseLeave(){
         this.props.onDeselection();
+        this.setState({circleFill: 'white'});
     }
     circleRadius(){
         return 3.5/this.props.zoomLevel;
     }
     render(){
-        return (<circle 
-                    onMouseEnter={this.handleMouseEnter}  onMouseLeave={this.handleMouseLeave}
-                    cx={this.props.longitude} cy={this.props.latitude} r={this.circleRadius()} fill='white'
-                />);
+        return (<>{this.displayAirport()}</>);
     }
 }
+/*
+<circle 
+    onMouseEnter={this.handleMouseEnter}  onMouseLeave={this.handleMouseLeave}
+    cx={this.props.longitude} cy={this.props.latitude} r={this.circleRadius()} fill={this.state.circleFill}
+/>
+*/

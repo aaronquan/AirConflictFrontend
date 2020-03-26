@@ -10,3 +10,9 @@
 
     display: block;
 }
+
+.Map .Absolute{
+    pointer-events: none;
+    position: absolute;
+    display: block;
+}

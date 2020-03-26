@@ -28,11 +28,25 @@ class App extends React.Component<{}, AppState>{
           min_latitude: -15,
           max_latitude: 45,
         },*/
-        width: 1200,
-        height: 700
+        width: window.innerWidth, // temporary solution
+        height: window.innerHeight
       },
       mouseDown:false
     }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+  }
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+  //TODO update svg map on resize of window
+  updateWindowDimensions() {
+    let bound = this.state.mapCanvasState.bound;
+    this.setState({mapCanvasState:{bound:bound, width: window.innerWidth, height: window.innerHeight }});
   }
   render(){
     return (
