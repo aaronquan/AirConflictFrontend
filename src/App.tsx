@@ -124,14 +124,14 @@ class App extends React.Component<AppProps, AppState>{
         <b>Controls:</b>
         <ul>
           <li>Mouse drag to pan map</li>
-          <li>Arrow keys to pan map</li>
           <li>Scroll wheel to zoom in and out</li>
-          <li>z to zoom in and y to zoom out</li>
         </ul>
       </div>
     </div>
     );
   }
+  //<li>Arrow keys to pan map</li>
+  //<li>z to zoom in and y to zoom out</li>
   boundsComponent(){
     return(
       <div className='Info'>

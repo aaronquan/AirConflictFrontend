@@ -46,7 +46,7 @@ export class BoundInput extends React.Component<BoundInputProps, BoundInputState
                             max_latitude: this.state.max_latitude,
                         }
                         this.props.action(bbox);
-                        this.setState({errorMessage: ' '});
+                        this.setState({errorMessage: 'Out of order / in progress'});
                     }else{
                         this.setState({errorMessage: 'Min Latitude must be less than Max Latitude'});
                     }
