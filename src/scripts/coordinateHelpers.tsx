@@ -56,3 +56,11 @@ export function coordinateInsideBound(coord:Coordinate, bound:BoundingBox){
     }
     return ret;
 }
+
+export function validLatitude(lat:number){
+    return lat > -90 && lat <= 90;
+}
+
+export function validLongitude(lon:number){
+    return lon > -180 && lon <= 180;
+}

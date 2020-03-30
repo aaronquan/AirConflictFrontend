@@ -46,11 +46,12 @@ export class Airports extends React.Component<AirportsProps, AirportsState>{
         this.props.onDeselection();
     }
     render(){
-        return (<>{this.state.airports.map((airport:AirportProps) => 
-                    <Airport 
-                        onSelection={this.onSelection} onDeselection={this.onDeselection}
-                        key={airport.icao} {...airport} zoomLevel={this.props.zoomLevel} viewBound={this.props.viewBound}
-                    />
-                )}</>);
+        return (
+        <>{this.state.airports.map((airport:AirportProps) => 
+            <Airport 
+                onSelection={this.onSelection} onDeselection={this.onDeselection}
+                key={airport.icao} {...airport} zoomLevel={this.props.zoomLevel} viewBound={this.props.viewBound}
+            />
+        )}</>);
     }
 };
