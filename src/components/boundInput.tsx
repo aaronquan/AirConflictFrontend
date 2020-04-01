@@ -33,8 +33,8 @@ export class BoundInput extends React.Component<BoundInputProps, BoundInputState
         this.handleChange = this.handleChange.bind(this);
     }
     handleClick(){
-        if(this.state.min_longitude != undefined && this.state.max_longitude != undefined && 
-            this.state.min_latitude != undefined && this.state.max_latitude != undefined){
+        if(this.state.min_longitude !== undefined && this.state.max_longitude !== undefined && 
+            this.state.min_latitude !== undefined && this.state.max_latitude !== undefined){
             if(validLatitude(this.state.min_latitude) && validLatitude(this.state.max_latitude) &&
                 validLongitude(this.state.min_longitude) && validLongitude(this.state.max_longitude)){
                 if(this.state.min_longitude < this.state.max_longitude){
@@ -46,7 +46,8 @@ export class BoundInput extends React.Component<BoundInputProps, BoundInputState
                             max_latitude: this.state.max_latitude,
                         }
                         this.props.action(bbox);
-                        this.setState({errorMessage: 'Out of order / in progress'});
+                        this.setState({errorMessage: ''});
+                        //this.setState({errorMessage: 'Out of order / in progress'});
                     }else{
                         this.setState({errorMessage: 'Min Latitude must be less than Max Latitude'});
                     }

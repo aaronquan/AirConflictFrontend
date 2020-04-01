@@ -23,7 +23,6 @@ type ToggleButtonGroupState = {
 }
 
 export class ToggleButtonGroup extends React.Component<ToggleButtonGroupProps, ToggleButtonGroupState>{
-    private colour = '#f50057';
     constructor(props:ToggleButtonGroupProps){
         super(props);
         let buttonsActiveState = [];

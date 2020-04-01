@@ -97,7 +97,6 @@ class App extends React.Component<AppProps, AppState>{
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
   }
-  
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
@@ -127,6 +126,7 @@ class App extends React.Component<AppProps, AppState>{
           <li>Scroll wheel to zoom in and out</li>
         </ul>
       </div>
+      <div>Currently there are optimisation problems for rendering larger maps</div>
     </div>
     );
   }

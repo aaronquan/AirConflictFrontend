@@ -53,6 +53,7 @@ export type MapCanvasProps = {
 
 type MapCanvasState = {
     transform:Transform,
+    initialZoom:number,
     mouse:Point,
     rawMouse:Point,
     mapViewBounds:BoundingBox,
@@ -68,7 +69,7 @@ type MapCanvasState = {
 class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
     private svgRef:React.RefObject<SVGSVGElement>;
     private transformRef:React.RefObject<SVGSVGElement>;
-    private initialZoom:number;
+    //private initialZoom:number;
     constructor(props:MapCanvasProps){
         super(props, {transform: getTransformation(props)});
         this.svgRef = React.createRef<SVGSVGElement>();
@@ -76,13 +77,14 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         let transformation = getTransformation(props);
         this.state = {
             transform:transformation,
+            initialZoom:transformation.scale.x,
             mouse: {x:0, y:0},
             rawMouse: {x:0, y:0},
             mouseDown: false,
             mapViewBounds: props.bound,
             selectedAirport: undefined
         };
-        this.initialZoom = transformation.scale.x;
+        //this.initialZoom = transformation.scale.x;
         //function bindings
         this.handleMove = this.handleMove.bind(this);
         this.handleUp = this.handleUp.bind(this);
@@ -145,6 +147,15 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         this.setState({mapViewBounds: viewBound});
         //console.log(viewBound);
         //console.log(this.state.transform);
+    }
+    componentDidUpdate(prevProps:MapCanvasProps){
+        if(this.props.bound !== prevProps.bound){
+            let transformation  = getTransformation(this.props);
+            let viewBound:BoundingBox = this.getMapViewBounds(transformation);
+            this.setState({transform:transformation, mapViewBounds: viewBound, initialZoom:transformation.scale.x});
+            console.log(transformation);
+            console.log(viewBound);
+        }
     }
     handleMove(e:React.MouseEvent){
         let lastPoint:Point = this.state.mouse;
@@ -222,7 +233,7 @@ class SvgMapCanvas extends React.Component<MapCanvasProps, MapCanvasState>{
         }
         if(e.deltaY > 0){ //zoom out
             //if(this.state.transform.scale.x > this.initialZoom){ // old : float may not carry correct values after zoom
-            if(floatGT(this.state.transform.scale.x, this.initialZoom)){
+            if(floatGT(this.state.transform.scale.x, this.state.initialZoom)){
                 newZoom /= zoomScale;
 
                 //translate shift is not exactly correct since scaleDifference changes on zoom out

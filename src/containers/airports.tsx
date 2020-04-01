@@ -27,6 +27,14 @@ export class Airports extends React.Component<AirportsProps, AirportsState>{
         this.onDeselection = this.onDeselection.bind(this);
     }
     componentDidMount(){
+        this.requestAirports();
+    }
+    componentDidUpdate(prevProps:AirportsProps){
+        if(this.props.maxBound !== prevProps.maxBound){
+            this.requestAirports();
+        }
+    }
+    requestAirports(){
         let updateState = (r:AxiosResponse<any>) => {
             //console.log(r.data.results);
             this.setState((state) => {

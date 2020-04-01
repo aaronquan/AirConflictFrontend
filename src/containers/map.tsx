@@ -21,21 +21,33 @@ export class Map extends React.Component<MapProps, MapState>{
         this.state = {mapData: []};
     }
     componentDidMount(){
+        this.requestData();
+    }
+    componentDidUpdate(prevProps:MapProps){
+        if(this.props.maxBound != prevProps.maxBound){
+            //console.log('hello');
+            this.requestData();
+        }
+    }
+    requestData(){
+        this.setState({mapData: []});
         let updateState = (r:AxiosResponse<any>) => {
             this.setState((state) => {
+                console.log(r.data.results);
                 return {mapData: state.mapData.concat(r.data.results)};
             })
         }
         //requestChain(`http://localhost:62080/api/maparea/`, updateState, {params: {...this.props}}); //old axios call (check time diff)
         //requestAllPages(`http://airconflictapi.herokuapp.com/api/map/`, updateState);
         requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/maparea/`, updateState, {params: {...this.props.maxBound}});
-
-        //requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/map/`, updateState); //current use
+        //requestAllPagesFastReturn(`http://airconflictapi.herokuapp.com/api/map/`, updateState);
     }
     render(){
-        return (<>{this.state.mapData.map((shape:MapShapeProps) =>
-                <MapShape key={shape.admin} {...shape} viewBound={this.props.viewBound}/>)
-            }</>);
+        return (
+        <>{this.state.mapData.map((shape:MapShapeProps) =>
+            <MapShape key={shape.admin} {...shape} viewBound={this.props.viewBound}/>)
+        }</>
+        );
     }
 }
 
